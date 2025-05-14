@@ -44,4 +44,11 @@ class Task extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function isAssignedTo(int $userId): bool
+    {
+        return $this->users()
+            ->where('users.id', $userId)
+            ->exists();
+    }
 }

@@ -15,12 +15,12 @@ class CommentController extends Controller
     public function __construct(private CommentService $commentService) {}
     
 
-    public function indexByTask(int $taskId): JsonResponse
-    {
-         $comments = $this->commentService->getCommentsForTask($taskId);
+    // public function indexByTask(int $taskId): JsonResponse
+    // {
+    //      $comments = $this->commentService->getCommentsForTask($taskId);
 
-        return $this->successResponse($comments);
-    }
+    //     return $this->successResponse($comments);
+    // }
 
     /**
      * Store a newly created resource in storage.
