@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\AuthController;
 use App\Http\Controllers\V1\TaskController;
+use App\Http\Controllers\Api\V1\CommentController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,8 +23,14 @@ Route::group(['prefix' => 'v1','middleware' => 'api'], function () {
     });
 
       Route::group(['middleware' => 'auth:sanctum'], function () {
+            # Tasks
             Route::apiResource('/tasks', TaskController::class);
-             Route::apiResource('/comments', TaskController::class);
+           
+            # Comments 
+            Route::get('/tasks/{task}/comments', [CommentController::class, 'indexByTask']);
+            Route::post('/comments', [CommentController::class, 'store']);
+            Route::put('/comments/{comment}', [CommentController::class, 'update']);
+            Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
       });
 
 
