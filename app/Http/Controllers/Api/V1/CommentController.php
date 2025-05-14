@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Services\CommentService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentResource;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Requests\Comment\UpdateCommentRequest;
+use Dom\Comment;
 
 class CommentController extends Controller
 {
@@ -27,19 +29,23 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest  $request): JsonResponse
     {
-        $comment = $this->commentService->create($request->validated());
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        $comment = $this->commentService->create($data);
        
-        return $this->successResponse($comment, 201);
+        return $this->successResponse(new CommentResource($comment));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCommentRequest  $request, string $id): JsonResponse
+    public function update(UpdateCommentRequest  $request, int $id): JsonResponse
     {
+        $comment = Comment::findOrFail($id);
+        $this->authorize('update', $comment);
         $comment = $this->commentService->update($id, $request->validated());
         
-        return $this->successResponse($comment);
+        return $this->successResponse(new CommentResource($comment));
     }
 
     /**
@@ -47,6 +53,8 @@ class CommentController extends Controller
      */
     public function destroy(string $id): JsonResponse 
     {
+         $comment = Comment::findOrFail($id);
+        $this->authorize('update', $comment);
         $this->commentService->delete($id);
        
         return $this->successResponse(null);

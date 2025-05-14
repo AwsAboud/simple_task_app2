@@ -16,6 +16,7 @@ class TaskService
 
             // If there are assigned users, assign them to the task
             if (isset($data['assigned_users'])) {
+                
                     $this->syncUsersToTask($task, $data['assigned_users']);
             }
 
@@ -32,7 +33,7 @@ class TaskService
     // Ger a Task by ID
     public function getOne(Task $task)
     {
-        return $task->load(['status', 'priority', 'users']);
+        return $task->load(['status', 'priority', 'users', 'comments']);
     }
 
     // Update Task
@@ -60,9 +61,17 @@ class TaskService
     // Sync users with additional pivot data (role and assigned_at)
     public function syncUsersToTask(Task $task, array $assigned_users)
     {
-        $task->users()->sync(
-            array_map(fn($user) => [$user['id'] => ['role' => $user['role'], 'assigned_at' => now()]], $assigned_users)
-        );
+       
+        $syncData = [];
+
+        foreach ($assigned_users as $user) {
+            $syncData[$user['id']] = [
+                'role' => $user['role'],
+                'assigned_at' => now(),
+            ];
+        }
+
+        $task->users()->sync($syncData);
     }
 
 

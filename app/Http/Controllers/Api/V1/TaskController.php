@@ -8,6 +8,7 @@ use App\Services\TaskService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
@@ -18,9 +19,10 @@ class TaskController extends Controller
      */
     public function index()
     {
+         $this->authorize('viewAny', Task::class);
          $tasks = $this->taskService->getAll();
 
-        return $this->successResponse($tasks);
+        return $this->successResponse(TaskResource::collection($tasks));
 
     }
 
@@ -29,11 +31,12 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
+        $this->authorize('create', Task::class);
         $data = $request->validated();
-        $data['created_by'] = auth()->id;
+        $data['created_by'] = auth()->id();
         $task = $this->taskService->create($data);
 
-       return $this->successResponse($task, code:201);
+       return $this->successResponse(new TaskResource($task));
     }
 
     /**
@@ -41,9 +44,10 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        $this->authorize('view', $task);
         $task = $this->taskService->getOne($task);
 
-       return $this->successResponse($task);
+       return $this->successResponse(new TaskResource($task));
     }
 
     /**
@@ -51,9 +55,10 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
+        $this->authorize('update', $task);
         $this->taskService->update($task, $request->validated());
 
-        return $this->successResponse($task);
+        return $this->successResponse(new TaskResource($task));
     }
 
     /**
@@ -61,6 +66,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $this->authorize('delete', $task);
         $this->taskService->delete($task);
 
         return $this->successResponse(null);

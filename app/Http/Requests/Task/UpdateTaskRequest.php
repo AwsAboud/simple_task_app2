@@ -29,7 +29,7 @@ class UpdateTaskRequest extends FormRequest
             'description' => ['required', 'required', 'string'],
             'due_date' => ['nullable', 'date'],
             'assigned_users' => ['sometimes', 'array', 'min:1', 'max:10'],
-            'assigned_users.*.user_id' => [
+            'assigned_users.*.id' => [
                 'required',
                 'exists:users,id',
                 'distinct'

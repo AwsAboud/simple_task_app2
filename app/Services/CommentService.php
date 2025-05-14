@@ -28,7 +28,7 @@ class CommentService
     {
         // TODO make sure that only user who create the comment can update it 
         $comment = Comment::findOrFail($id);
-
+        
         // Only update the body
         $comment->update([
             'body' => $data['body']

@@ -10,7 +10,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::group(['prefix' => 'v1','middleware' => 'api'], function () {
+Route::group(['prefix' => 'v1'], function () {
     
     Route::group(['prefix' => 'auth'], function () {
         Route::post('register', [AuthController::class, 'register']);
