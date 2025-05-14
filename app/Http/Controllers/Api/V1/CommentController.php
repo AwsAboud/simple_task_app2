@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use App\Services\CommentService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\CommentResource;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Requests\Comment\UpdateCommentRequest;
-use Dom\Comment;
+
 
 class CommentController extends Controller
 {
@@ -30,6 +32,7 @@ class CommentController extends Controller
     public function store(StoreCommentRequest  $request): JsonResponse
     {
         $data = $request->validated();
+        $data['user_id'] = auth()->id();
         $comment = $this->commentService->create($data);
        
         return $this->successResponse(new CommentResource($comment));
@@ -38,9 +41,10 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCommentRequest  $request, int $id): JsonResponse
+    public function update(UpdateCommentRequest  $request, Comment $comment): JsonResponse
     {
-        $comment = $this->commentService->update($id, $request->validated());
+          Gate::authorize('update', $comment);
+        $comment = $this->commentService->update($comment, $request->validated());
         
         return $this->successResponse(new CommentResource($comment));
     }
@@ -48,9 +52,10 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $id): JsonResponse 
+    public function destroy(Comment $comment): JsonResponse 
     {
-        $this->commentService->delete($id);
+        Gate::authorize('delete', $comment);
+        $this->commentService->delete($comment);
        
         return $this->successResponse(null);
     }

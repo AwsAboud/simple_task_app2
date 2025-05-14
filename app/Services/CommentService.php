@@ -24,10 +24,10 @@ class CommentService
     }
 
     // Update an existing comment
-    public function update(int $id, array $data): Comment
+    public function update(Comment $comment, array $data): Comment
     {
         // TODO make sure that only user who create the comment can update it 
-        $comment = Comment::findOrFail($id);
+        //$comment = Comment::findOrFail($id);
         
         // Only update the body
         $comment->update([
@@ -39,12 +39,9 @@ class CommentService
 
     //  Delete a comment
 
-    public function delete(int $id): bool
+    public function delete(Comment $comment): bool
     {
         // TODO make sure that only user who create the comment can delete it 
-        
-        $comment = Comment::findOrFail($id);
-
         return $comment->delete();
     }
 }
