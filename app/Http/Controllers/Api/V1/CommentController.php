@@ -30,7 +30,6 @@ class CommentController extends Controller
     public function store(StoreCommentRequest  $request): JsonResponse
     {
         $data = $request->validated();
-        $data['user_id'] = auth()->id();
         $comment = $this->commentService->create($data);
        
         return $this->successResponse(new CommentResource($comment));
@@ -41,8 +40,6 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest  $request, int $id): JsonResponse
     {
-        $comment = Comment::findOrFail($id);
-        $this->authorize('update', $comment);
         $comment = $this->commentService->update($id, $request->validated());
         
         return $this->successResponse(new CommentResource($comment));
@@ -51,10 +48,8 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): JsonResponse 
+    public function destroy(int $id): JsonResponse 
     {
-         $comment = Comment::findOrFail($id);
-        $this->authorize('update', $comment);
         $this->commentService->delete($id);
        
         return $this->successResponse(null);
