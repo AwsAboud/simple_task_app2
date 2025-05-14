@@ -16,10 +16,6 @@ class Task extends Model
         'title',
         'description',
         'due_date',
-        'estimated_time',
-        'actual_time',
-        'started_at',
-        'completed_at',
     ];
 
     public function users(): BelongsToMany

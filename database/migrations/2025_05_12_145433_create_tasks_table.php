@@ -19,10 +19,6 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->date('due_date')->nullable();
-            $table->unsignedInteger('estimated_time')->nullable();
-            $table->unsignedInteger('actual_time')->nullable();
-            $table->timestamp('started_at')->nullable();
-            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
     }

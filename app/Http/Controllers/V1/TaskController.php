@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\V1;
+
+use App\Models\Task;
+use Illuminate\Http\Request;
+use App\Services\TaskService;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
+
+class TaskController extends Controller
+{
+     public function __construct(private TaskService $taskService) {}
+     
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+         $tasks = $this->taskService->getAll();
+
+        return $this->successResponse($tasks);
+
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(StoreTaskRequest $request)
+    {
+        $data = $request->validated();
+        $data['created_by'] = auth()->id;
+        $task = $this->taskService->create($data);
+
+       return $this->successResponse($task, code:201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Task $task)
+    {
+        $task = $this->taskService->getOne($task);
+
+       return $this->successResponse($task);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdateTaskRequest $request, Task $task)
+    {
+        $this->taskService->update($task, $request->validated());
+
+        return $this->successResponse($task);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Task $task)
+    {
+        $this->taskService->delete($task);
+
+        return $this->successResponse(null);
+    }
+}

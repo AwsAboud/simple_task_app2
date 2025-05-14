@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\AuthController;
+use App\Http\Controllers\V1\TaskController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,6 +21,10 @@ Route::group(['prefix' => 'v1','middleware' => 'api'], function () {
         });
     });
 
-    
+      Route::group(['middleware' => 'auth:sanctum'], function () {
+            Route::apiResource('/tasks', TaskController::class);
+             Route::apiResource('/comments', TaskController::class);
+      });
+
 
 });
